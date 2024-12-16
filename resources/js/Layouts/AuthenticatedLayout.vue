@@ -3,7 +3,6 @@ import {ref} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link, usePage} from '@inertiajs/vue3';
 
@@ -13,7 +12,7 @@ const authUser = usePage().props.auth.user;
 </script>
 
 <template>
-    <div class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-gray-900">
+    <div class="h-screen overflow-hidden flex flex-col bg-gray-100 dark:bg-gray-900">
         <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
