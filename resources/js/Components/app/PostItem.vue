@@ -2,7 +2,6 @@
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {PencilIcon, TrashIcon, EllipsisVerticalIcon} from '@heroicons/vue/20/solid'
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
-import {ref} from "vue";
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 const props = defineProps({
     post: Object
@@ -18,6 +17,11 @@ function isImage(attachment) {
 function openEditModal() {
     emit('editClick', props.post)
 }
+
+function openDeleteModal() {
+    emit('deleteClick', props.post)
+}
+
 </script>
 <template>
     <div class="bg-white border rounded p-4 mb-3">
@@ -47,7 +51,7 @@ function openEditModal() {
                             </button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
-                            <button :class="[
+                            <button @click="openDeleteModal" :class="[
                                 active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                             ]">

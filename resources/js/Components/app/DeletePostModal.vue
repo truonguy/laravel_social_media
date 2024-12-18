@@ -33,24 +33,32 @@
                                     as="h3"
                                     class="flex items-center justify-between py-3 px-4 font-medium bg-gray-100 text-gray-900"
                                 >
-                                    Update Post
-                                    <button @click="show = false" class="w-8 h-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
+                                    Delete Post
+                                    <button @click="closeModal" class="w-8 h-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
                                         <XMarkIcon class="w-4 h-4" />
                                     </button>
                                 </DialogTitle>
                                 <div class="p-4">
-                                    <PostUserHeader :post="post" :show-time="false" class="mb-4"/>
-                                    <InputTextarea v-model="form.body" class="mb-3 w-full" />
+                                    <div class="font-medium text-gray-900">Are you sure you want to delete this post?</div>
                                 </div>
-                                <div class="py-3 px-4">
+                                <div class="py-3 px-4 flex justify-between items-center gap-2">
+                                    <button
+                                        type="button"
+                                        class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline
+                                         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 w-full"
+                                        @click="deletePost"
+                                    >
+                                        Delete
+                                    </button>
                                     <button
                                         type="button"
                                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
-                                        @click="submit"
+                                        @click="closeModal"
                                     >
-                                        Submit
+                                        Cancel
                                     </button>
                                 </div>
+
                             </DialogPanel>
                         </TransitionChild>
                     </div>
@@ -59,9 +67,10 @@
         </TransitionRoot>
     </teleport>
 </template>
+
 <script setup>
-import {computed, watch} from 'vue'
-import {XMarkIcon} from '@heroicons/vue/24/solid'
+import { computed, watch } from 'vue'
+import { XMarkIcon } from '@heroicons/vue/24/solid'
 import {
     TransitionRoot,
     TransitionChild,
@@ -69,9 +78,8 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
-import InputTextarea from "@/Components/InputTextarea.vue";
-import PostUserHeader from "@/Components/app/PostUserHeader.vue";
-import {useForm} from "@inertiajs/vue3";
+import { useForm } from "@inertiajs/vue3";
+
 const props = defineProps({
     post: {
         type: Object,
@@ -79,24 +87,30 @@ const props = defineProps({
     },
     modelValue: Boolean
 })
-const form = useForm({
-    id: null,
-    body: ''
-})
+
+const emit = defineEmits(['update:modelValue'])
+
 const show = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
 })
-const emit = defineEmits(['update:modelValue'])
+
+const form = useForm({
+    id: null,
+    body: ''
+})
+
 watch(() => props.post, () => {
     form.id = props.post.id
     form.body = props.post.body
 })
+
 function closeModal() {
     show.value = false
 }
-function submit(){
-    form.put(route('post.update', props.post.id), {
+
+function deletePost() {
+    form.delete(route('post.destroy', props.post.id), {
         preserveScroll: true,
         onSuccess: () => {
             show.value = false

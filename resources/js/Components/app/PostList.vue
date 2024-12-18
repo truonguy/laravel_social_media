@@ -2,15 +2,23 @@
 import PostItem from "@/Components/app/PostItem.vue";
 import PostModal from "@/Components/app/PostModal.vue";
 import {ref} from "vue";
+import DeletePostModal from "./DeletePostModal.vue";
 defineProps({
     posts: Array
 })
 
 const showEditModal = ref(false)
+const showDeleteModal = ref(false)
 const editPost = ref({})
+const deletePost = ref({})
 function openEditModal(post) {
     editPost.value = post;
     showEditModal.value = true;
+}
+
+function openDeleteModal(post) {
+    deletePost.value = post;
+    showDeleteModal.value = true;
 }
 
 const post1 = {
@@ -65,8 +73,9 @@ const post2 = {
 </script>
 <template>
     <div class="overflow-auto h-full">
-        <PostItem v-for="post of posts" :key="post.id" :post="post" @editClick="openEditModal"/>
+        <PostItem v-for="post of posts" :key="post.id" :post="post" @editClick="openEditModal" @deleteClick="openDeleteModal"/>
         <PostModal :post="editPost" v-model="showEditModal"/>
+        <DeletePostModal :post="deletePost" v-model="showDeleteModal"/>
     </div>
 </template>
 <style scoped>
