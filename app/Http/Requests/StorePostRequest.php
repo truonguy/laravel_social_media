@@ -1,6 +1,10 @@
 <?php
+
 namespace App\Http\Requests;
+
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+
 class StorePostRequest extends FormRequest
 {
     /**
@@ -10,6 +14,7 @@ class StorePostRequest extends FormRequest
     {
         return true;
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,11 +27,12 @@ class StorePostRequest extends FormRequest
             'user_id' => ['numeric']
         ];
     }
+
     protected function prepareForValidation()
     {
-        // Add your custom key to the request data
         $this->merge([
-            'user_id' => \Illuminate\Support\Facades\Auth::user()->id,
+            'user_id' => Auth::user()->id,
+            'body' => $this->input('body') ?: ''
         ]);
     }
 }
