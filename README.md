@@ -1,9 +1,6 @@
 ## Installation with Docker
 
 ### 1. Clone the project
-```bash
-git clone https://github.com/thecodeholic/laravel-social-media-website.git
-```
 
 ### 2. Run `composer install`
 Navigate into the project folder using Terminal and execute the following command:

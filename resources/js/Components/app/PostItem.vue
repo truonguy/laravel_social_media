@@ -1,28 +1,31 @@
 <script setup>
-import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
-import {PencilIcon, TrashIcon, EllipsisVerticalIcon} from '@heroicons/vue/20/solid'
-import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { PencilIcon, TrashIcon, EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
+import { router } from '@inertiajs/vue3'
+import { isImage } from '@/helpers.js'
+
 const props = defineProps({
     post: Object
 })
 
 const emit = defineEmits(['editClick'])
 
-function isImage(attachment) {
-    const mime = attachment.mime.split('/')
-    return mime[0].toLowerCase() === 'image'
-}
-
 function openEditModal() {
     emit('editClick', props.post)
 }
 
-function openDeleteModal() {
-    emit('deleteClick', props.post)
+function deletePost() {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+        router.delete(route('post.destroy', props.post), {
+            preserveScroll: true
+        })
+    }
 }
 
 </script>
+
 <template>
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex items-center justify-between mb-3">
@@ -31,9 +34,11 @@ function openDeleteModal() {
                 <div>
                     <MenuButton
                         class="w-8 h-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
+
                         <EllipsisVerticalIcon class="w-5 h-5" aria-hidden="true" />
                     </MenuButton>
                 </div>
+
                 <transition enter-active-class="transition duration-100 ease-out"
                     enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100"
                     leave-active-class="transition duration-75 ease-in"
@@ -51,7 +56,7 @@ function openDeleteModal() {
                             </button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
-                            <button @click="openDeleteModal" :class="[
+                            <button @click="deletePost" :class="[
                                 active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                             ]">
@@ -66,10 +71,10 @@ function openDeleteModal() {
         </div>
         <div class="mb-3">
             <Disclosure v-slot="{ open }">
-                <div class="ck-content-output" v-if="!open" v-html="post.body.substring(0, 200)"/>
+                <div class="ck-content-output" v-if="!open" v-html="post.body.substring(0, 200)" />
                 <template v-if="post.body.length > 200">
                     <DisclosurePanel>
-                        <div class="ck-content-output" v-html="post.body"/>
+                        <div class="ck-content-output" v-html="post.body" />
                     </DisclosurePanel>
                     <div class="flex justify-end">
                         <DisclosureButton class="text-blue-500 hover:underline">
@@ -81,6 +86,7 @@ function openDeleteModal() {
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
             <template v-for="attachment of post.attachments">
+
                 <div
                     class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
                     <!-- Download-->
@@ -93,6 +99,7 @@ function openDeleteModal() {
                         </svg>
                     </button>
                     <!--/ Download-->
+
                     <img v-if="isImage(attachment)" :src="attachment.url" class="object-cover aspect-square" />
                     <template v-else>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -102,6 +109,7 @@ function openDeleteModal() {
                             <path
                                 d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
                         </svg>
+
                         <small>{{ attachment.name }}</small>
                     </template>
                 </div>
@@ -129,4 +137,5 @@ function openDeleteModal() {
         </div>
     </div>
 </template>
+
 <style scoped></style>
