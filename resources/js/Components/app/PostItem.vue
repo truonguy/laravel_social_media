@@ -4,7 +4,6 @@ import { PencilIcon, TrashIcon, EllipsisVerticalIcon } from '@heroicons/vue/20/s
 import { ChatBubbleLeftRightIcon, HandThumbUpIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
-import { router } from '@inertiajs/vue3'
 import { isImage } from '@/helpers.js'
 import { PaperClipIcon } from "@heroicons/vue/24/solid/index.js";
 
@@ -97,7 +96,7 @@ function openAttachment(ind) {
                         +{{ post.attachments.length - 4 }} more
                     </div>
                     <!-- Download-->
-                    <a :href="route('post.download', attachment)"
+                    <a @click.stop :href="route('post.download', attachment)"
                         class="z-20 opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
                         <ArrowDownTrayIcon class="w-4 h-4" />
                     </a>
