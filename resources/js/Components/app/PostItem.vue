@@ -92,10 +92,10 @@ function openDeleteModal() {
                         +{{ post.attachments.length - 4 }} more
                     </div>
                     <!-- Download-->
-                    <button
+                    <a :href="route('post.download', attachment)"
                         class="z-20 opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
                         <ArrowDownTrayIcon class="w-4 h-4" />
-                    </button>
+                    </a>
                     <!--/ Download-->
 
                     <img v-if="isImage(attachment)" :src="attachment.url" class="object-contain aspect-square" />
