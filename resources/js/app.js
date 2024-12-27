@@ -21,7 +21,7 @@ createInertiaApp({
             return createApp({render: () => h(App, props)})
             .use(plugin)
             .use(CKEditor)
-            .use(ZiggyVue, Ziggy)
+            .use(ZiggyVue)
             .mount(el);
     },
     progress: {

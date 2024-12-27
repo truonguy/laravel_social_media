@@ -200,7 +200,7 @@ function undoDelete(myFile) {
                                 <div class="flex gap-2 py-3 px-4">
                                     <button type="button"
                                         class="flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full relative"
-                                        @click="submit">
+                                        >
                                         <PaperClipIcon class="w-4 h-4 mr-2" />
                                         Attach Files
                                         <input @click.stop @change="onAttachmentChoose" type="file" multiple
