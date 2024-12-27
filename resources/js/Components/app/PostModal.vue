@@ -1,13 +1,13 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid'
+import { computed, ref, watch } from 'vue';
+import { XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon } from '@heroicons/vue/24/solid';
 import {
     TransitionRoot,
     TransitionChild,
     Dialog,
     DialogPanel,
     DialogTitle,
-} from '@headlessui/vue'
+} from '@headlessui/vue';
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -16,115 +16,122 @@ import { isImage } from "@/helpers.js";
 const editor = ClassicEditor;
 const editorConfig = {
     toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'outdent', 'indent', '|', 'link', '|', 'blockQuote'],
-}
+};
 
 const attachmentExtensions = usePage().props.attachmentExtensions;
 
 const props = defineProps({
     post: {
         type: Object,
-        required: true
+        required: true,
     },
-    modelValue: Boolean
-})
+    modelValue: Boolean,
+});
 
-/**
- * {
- *     file: File,
- *     url: '',
- * }
- * @type {Ref<UnwrapRef<*[]>>}
- */
-const attachmentFiles = ref([])
-const attachmentErrors = ref([])
-const showExtensionsText = ref(false)
+const attachmentFiles = ref([]);
+const attachmentErrors = ref([]);
+const formErrors = ref({});
 
 const form = useForm({
     body: '',
     attachments: [],
     deleted_file_ids: [],
-    _method: 'POST'
-})
+    _method: 'POST',
+});
+
+const MAX_ATTACHMENT_SIZE = 1024 * 1024 * 1024; // 1GB in bytes
+
+const totalAttachmentSize = computed(() => {
+    return attachmentFiles.value.reduce((total, file) => total + file.file.size, 0);
+});
+
+const isAttachmentSizeExceeded = computed(() => {
+    return totalAttachmentSize.value > MAX_ATTACHMENT_SIZE;
+});
 
 const show = computed({
     get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
-})
+    set: (value) => emit('update:modelValue', value),
+});
 
 const computedAttachments = computed(() => {
-    return [...attachmentFiles.value, ...(props.post.attachments || [])]
-})
-const emit = defineEmits(['update:modelValue', 'hide'])
+    return [...attachmentFiles.value, ...(props.post.attachments || [])];
+});
+
+const showExtensionsText = computed(() => {
+    for (let myFile of attachmentFiles.value) {
+        const file = myFile.file;
+        let parts = file.name.split('.');
+        let ext = parts.pop().toLowerCase();
+        if (!attachmentExtensions.includes(ext)) {
+            return true;
+        }
+    }
+    return false;
+});
+
+const emit = defineEmits(['update:modelValue', 'hide']);
 
 watch(() => props.post, () => {
-    console.log("This is triggered ", props.post)
-    form.body = props.post.body || ''
-})
+    form.body = props.post.body || '';
+});
 
 function closeModal() {
-    show.value = false
-    emit('hide')
+    show.value = false;
+    emit('hide');
     resetModal();
 }
 
 function resetModal() {
-    form.reset()
-    attachmentFiles.value = []
-    showExtensionsText.value = false;
+    form.reset();
+    formErrors.value = {};
+    attachmentFiles.value = [];
     attachmentErrors.value = [];
     if (props.post.attachments) {
-        props.post.attachments.forEach(file => file.deleted = false)
+        props.post.attachments.forEach(file => file.deleted = false);
     }
 }
 
 function submit() {
-    form.attachments = attachmentFiles.value.map(myFile => myFile.file)
+    if (isAttachmentSizeExceeded.value) {
+        alert("The total attachment size exceeds 1GB. Please remove some files.");
+        return;
+    }
+
+    form.attachments = attachmentFiles.value.map(myFile => myFile.file);
     if (props.post.id) {
-        form._method = 'PUT'
+        form._method = 'PUT';
         form.post(route('post.update', props.post.id), {
             preserveScroll: true,
-            onSuccess: (res) => {
-                closeModal()
-            },
-            onError: (errors) => {
-                processErrors(errors)
-            }
-        })
+            onSuccess: () => closeModal(),
+            onError: (errors) => processErrors(errors),
+        });
     } else {
         form.post(route('post.create'), {
             preserveScroll: true,
-            onSuccess: (res) => {
-                closeModal()
-            },
-            onError: (errors) => {
-                processErrors(errors)
-            }
-        })
+            onSuccess: () => closeModal(),
+            onError: (errors) => processErrors(errors),
+        });
     }
+}
 
-    function processErrors(errors) {
-        for (const key in errors) {
-            if (key.includes('.')) {
-                const [, index] = key.split('.')
-                attachmentErrors.value[index] = errors[key]
-            }
+function processErrors(errors) {
+    formErrors.value = errors;
+    for (const key in errors) {
+        if (key.includes('.')) {
+            const [, index] = key.split('.');
+            attachmentErrors.value[index] = errors[key];
         }
     }
 }
 
 async function onAttachmentChoose($event) {
-    showExtensionsText.value = false;
     for (const file of $event.target.files) {
-        let parts = file.name.split('.')
-        let ext = parts.pop().toLowerCase()
-        if (!attachmentExtensions.includes(ext)) {
-            showExtensionsText.value = true;
-        }
         const myFile = {
             file,
-            url: await readFile(file)
-        }
-        attachmentFiles.value.push(myFile)
+            url: await readFile(file),
+        };
+        attachmentFiles.value.push(myFile);
     }
     $event.target.value = null;
 }
@@ -133,29 +140,27 @@ async function readFile(file) {
     return new Promise((res, rej) => {
         if (isImage(file)) {
             const reader = new FileReader();
-            reader.onload = () => {
-                res(reader.result)
-            }
-            reader.onerror = rej
-            reader.readAsDataURL(file)
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+            reader.readAsDataURL(file);
         } else {
-            res(null)
+            res(null);
         }
-    })
+    });
 }
 
 function removeFile(myFile) {
     if (myFile.file) {
-        attachmentFiles.value = attachmentFiles.value.filter(f => f !== myFile)
+        attachmentFiles.value = attachmentFiles.value.filter(f => f !== myFile);
     } else {
-        form.deleted_file_ids.push(myFile.id)
-        myFile.deleted = true
+        form.deleted_file_ids.push(myFile.id);
+        myFile.deleted = true;
     }
 }
 
 function undoDelete(myFile) {
     myFile.deleted = false;
-    form.deleted_file_ids = form.deleted_file_ids.filter(id => myFile.id !== id)
+    form.deleted_file_ids = form.deleted_file_ids.filter(id => myFile.id !== id);
 }
 
 </script>
@@ -164,16 +169,13 @@ function undoDelete(myFile) {
     <teleport to="body">
         <TransitionRoot appear :show="show" as="template">
             <Dialog as="div" @close="closeModal" class="relative z-50">
-                <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0"
-                    enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
                     <div class="fixed inset-0 bg-black/25" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 overflow-y-auto">
                     <div class="flex min-h-full items-center justify-center p-4 text-center">
-                        <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
-                            enter-to="opacity-100 scale-100" leave="duration-200 ease-in"
-                            leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
+                        <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
                             <DialogPanel
                                 class="w-full max-w-md transform overflow-hidden rounded bg-white text-left align-middle shadow-xl transition-all">
                                 <DialogTitle as="h3"
@@ -194,9 +196,16 @@ function undoDelete(myFile) {
                                         <small>{{ attachmentExtensions.join(', ') }}</small>
                                     </div>
 
+                                    <div v-if="formErrors.attachments" class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+                                        {{formErrors.attachments}}
+                                    </div>
+
+                                    <div v-if="isAttachmentSizeExceeded" class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+                                        The total size of attachments exceeds 1GB. Please remove some files.
+                                    </div>
+
                                     <div class="grid gap-3 my-3" :class="[
-                                        computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
-                                    ]">
+                                        computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2']">
                                         <div v-for="(myFile, ind) of computedAttachments">
 
                                             <div class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative border-2"
