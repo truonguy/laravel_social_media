@@ -26,4 +26,8 @@ class Post extends Model
     {
         return $this->hasMany(PostAttachment::class)->latest();;
     }
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(PostReaction::class);
+    }
 }
