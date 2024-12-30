@@ -12,7 +12,7 @@ defineProps({
 const authUser = usePage().props.auth.user;
 
 const showEditModal = ref(false)
-const showDeleteModal = ref(false)
+const showDeletePostModal = ref(false)
 const editPost = ref({})
 const showAttachmentsModal = ref(false)
 const deletePost = ref({})
@@ -31,9 +31,9 @@ function openAttachmentPreviewModal(post, index) {
     showAttachmentsModal.value = true;
 }
 
-function openDeleteModal(post) {
+function openDeletePostModal(post) {
     deletePost.value = post;
-    showDeleteModal.value = true;
+    showDeletePostModal.value = true;
 }
 
 function onModalHide() {
@@ -48,11 +48,12 @@ function onModalHide() {
 <template>
     <div class="overflow-auto h-full">
         <PostItem v-for="post of posts" :key="post.id" :post="post" @editClick="openEditModal"
-            @deleteClick="openDeleteModal" @attachmentClick="openAttachmentPreviewModal" />
+            @deletePostClick="openDeletePostModal" @attachmentClick="openAttachmentPreviewModal" />
         <PostModal :post="editPost" v-model="showEditModal" @hide="onModalHide" />
         <AttachmentPreviewModal :attachments="previewAttachmentsPost.post?.attachments || []"
             v-model:index="previewAttachmentsPost.index" v-model="showAttachmentsModal" />
-        <DeletePostModal :post="deletePost" v-model="showDeleteModal" />
+        <DeletePostModal :post="deletePost" v-model="showDeletePostModal" />
+
     </div>
 </template>
 <style scoped></style>
