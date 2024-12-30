@@ -14,9 +14,12 @@ class HomeController extends Controller
         $userId = Auth::id();
         $posts = Post::query()
             ->withCount('reactions')
-            ->with(['reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])
+            ->withCount('comments')
+            ->with([
+                'comments',
+                'reactions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }])
             ->latest()
             ->paginate(20);
         return Inertia::render('Home', [
