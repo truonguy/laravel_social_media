@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $userId = Auth::id();
         $posts = Post::query()
@@ -22,9 +23,13 @@ class HomeController extends Controller
                     $query->where('user_id', $userId);
                 }])
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
+            $posts = PostResource::collection($posts);
+            if ($request->wantsJson()) {
+                return $posts;
+            }
         return Inertia::render('Home', [
-            'posts' => PostResource::collection($posts)
+            'posts' => $posts
         ]);
     }
 }

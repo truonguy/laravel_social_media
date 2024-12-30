@@ -21,7 +21,7 @@ class PostResource extends JsonResource
             'group' => $this->group,
             'attachments' => PostAttachmentResource::collection($this->attachments),
             'num_of_reactions' => $this->reactions_count,
-            'num_of_comments' => $this->count($comments),
+            'num_of_comments' => count($comments),
             'current_user_has_reaction' => $this->reactions->count() > 0,
             'comments' => self::convertCommentsIntoTree($comments)
         ];

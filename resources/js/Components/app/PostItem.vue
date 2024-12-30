@@ -3,14 +3,12 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { PencilIcon, TrashIcon, EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
 import {
     ChatBubbleLeftRightIcon,
-    ChatBubbleLeftEllipsisIcon,
     HandThumbUpIcon,
 } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
-import EditDeleteDropdown from "@/Components/app/EditDeleteDropdown.vue";
 import PostAttachments from './PostAttachments.vue';
 import CommentList from "@/Components/app/CommentList.vue"
 
