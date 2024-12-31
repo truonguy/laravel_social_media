@@ -14,16 +14,16 @@ const form = useForm({
     password_confirmation: '',
 });
 
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
+// const showPassword = ref(false);
+// const showConfirmPassword = ref(false);
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
 };
 
-const toggleConfirmPasswordVisibility = () => {
-    showConfirmPassword.value = !showConfirmPassword.value;
-};
+// const toggleConfirmPasswordVisibility = () => {
+//     showConfirmPassword.value = !showConfirmPassword.value;
+// };
 
 const submit = () => {
     form.post(route('register'), {
@@ -82,12 +82,12 @@ const submit = () => {
                         placeholder="Enter your password"
                     />
                     <!-- Icon hiển thị/ẩn mật khẩu -->
-                    <span
+                    <!-- <span
                         class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
                         @click="togglePasswordVisibility"
                     >
                         <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                    </span>
+                    </span> -->
                 </div>
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -106,12 +106,12 @@ const submit = () => {
                         placeholder="Confirm your password"
                     />
                     <!-- Icon hiển thị/ẩn mật khẩu -->
-                    <span
+                    <!-- <span
                         class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
                         @click="toggleConfirmPasswordVisibility"
                     >
                         <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                    </span>
+                    </span> -->
                 </div>
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>

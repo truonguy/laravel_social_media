@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\InviteUsersRequest;
@@ -10,9 +12,11 @@ use App\Models\Group;
 use App\Models\GroupUser;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
+use App\Notifications\RequestToJoinGroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -89,7 +93,7 @@ class GroupController extends Controller
             if ($group->cover_path) {
                 Storage::disk('public')->delete($group->cover_path);
             }
-            $path = $cover->store('group-'.$group->id, 'public');
+            $path = $cover->store('group-' . $group->id, 'public');
             $group->update(['cover_path' => $path]);
             $success = 'Your cover image was updated';
         }
@@ -97,11 +101,11 @@ class GroupController extends Controller
             if ($group->thumbnail_path) {
                 Storage::disk('public')->delete($group->thumbnail_path);
             }
-            $path = $thumbnail->store('group-'.$group->id, 'public');
+            $path = $thumbnail->store('group-' . $group->id, 'public');
             $group->update(['thumbnail_path' => $path]);
             $success = 'Your thumbnail image was updated';
         }
-//        session('success', 'Cover image has been updated');
+        //        session('success', 'Cover image has been updated');
         return back()->with('success', $success);
     }
 
@@ -148,6 +152,26 @@ class GroupController extends Controller
         $groupUser->save();
         $adminUser = $groupUser->adminUser;
         $adminUser->notify(new InvitationApproved($groupUser->group, $groupUser->user));
-        return redirect(route('group.profile', $groupUser->group))->with('success', 'You accepted to join to group "'.$groupUser->group->name.'"');
+        return redirect(route('group.profile', $groupUser->group))
+            ->with('success', 'You accepted to join to group "' . $groupUser->group->name . '"');
+    }
+    public function join(Group $group)
+    {
+        $user = \request()->user();
+        $status = GroupUserStatus::APPROVED->value;
+        $successMessage = 'You have joined to group "' . $group->name . '"';
+        if (!$group->auto_approval) {
+            $status = GroupUserStatus::PENDING->value;
+            Notification::send($group->adminUsers, new RequestToJoinGroup($group, $user));
+            $successMessage = 'Your request has been accepted. You will be notified once you will be approved';
+        }
+        GroupUser::create([
+            'status' => $status,
+            'role' => GroupUserRole::USER->value,
+            'user_id' => $user->id,
+            'group_id' => $group->id,
+            'created_by' => $user->id,
+        ]);
+        return back()->with('success', $successMessage);
     }
 }
