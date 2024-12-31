@@ -8,13 +8,16 @@ use App\Http\Requests\InviteUsersRequest;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
+use App\Http\Resources\GroupUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\User;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
 use App\Notifications\RequestApproved;
 use App\Notifications\RequestToJoinGroup;
+use App\Notifications\RoleChanged;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +25,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class GroupController extends Controller
 {
@@ -31,12 +35,18 @@ class GroupController extends Controller
     public function profile(Group $group)
     {
         $group->load('currentUserGroup');
+        $users = User::query()
+            ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
+            ->join('group_users AS gu', 'gu.user_id', 'users.id')
+            ->orderBy('users.name')
+            ->where('group_id', $group->id)
+            ->get();
         $users = $group->approvedUsers()->orderBy('name')->get();
         $requests = $group->pendingUsers()->orderBy('name')->get();
         return Inertia::render('Group/View', [
             'success' => session('success'),
             'group' => new GroupResource($group),
-            'users' => UserResource::collection($users),
+            'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($requests)
         ]);
     }
@@ -205,8 +215,32 @@ class GroupController extends Controller
             $groupUser->save();
             $user = $groupUser->user;
             $user->notify(new RequestApproved($groupUser->group, $user, $approved));
-            return back()->with('success', 'User "'.$user->name.'" was '.($approved ? 'approved' : 'rejected'));
+            return back()->with('success', 'User "' . $user->name . '" was ' . ($approved ? 'approved' : 'rejected'));
         }
         return back();
+    }
+
+    public function changeRole(Request $request, Group $group)
+    {
+        if (!$group->isAdmin(Auth::id())) {
+            return response("You don't have permission to perform this action", 403);
+        }
+        $data = $request->validate([
+            'user_id' => ['required'],
+            'role' => ['required', Rule::enum(GroupUserRole::class)]
+        ]);
+        $user_id = $data['user_id'];
+        if ($group->isOwner($user_id)) {
+            return response("You can't change role of the owner of the group", 403);
+        }
+        $groupUser = GroupUser::where('user_id', $user_id)
+            ->where('group_id', $group->id)
+            ->first();
+        if ($groupUser) {
+            $groupUser->role = $data['role'];
+            $groupUser->save();
+            $groupUser->user->notify(new RoleChanged($group, $data['role']));
+            return back();
+        }
     }
 }

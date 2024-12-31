@@ -43,7 +43,7 @@
                 <div class="flex">
                     <div
                         class="flex items-center justify-center relative group/avatar -mt-[64px] ml-[48px] w-[128px] h-[128px] rounded-full">
-                        <img :src="avatarImageSrc || user.avatar_url || '/imgs/default_avatar.webp'"
+                        <img :src="avatarImageSrc || user.avatar_url || '/imgs/default_avatar.jpg'"
                             class="w-full h-full object-cover rounded-full">
                         <button v-if="!avatarImageSrc"
                             class="absolute left-0 top-0 right-0 bottom-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/avatar:opacity-100">
@@ -183,6 +183,7 @@ function resetAvatarImage() {
 
 function submitCoverImage() {
     imagesForm.post(route('profile.updateImages'), {
+        preserveScroll: true,
         onSuccess: (user) => {
             showNotification.value = true
             resetCoverImage()
@@ -195,6 +196,7 @@ function submitCoverImage() {
 
 function submitAvatarImage() {
     imagesForm.post(route('profile.updateImages'), {
+        preserveScroll: true,
         onSuccess: (user) => {
             showNotification.value = true
             resetAvatarImage()

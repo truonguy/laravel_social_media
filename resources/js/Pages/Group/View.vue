@@ -63,6 +63,7 @@ function resetThurmbnailImage() {
 }
 function submitCoverImage() {
     imagesForm.post(route('group.updateImages', props.group.slug), {
+        preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
             resetCoverImage()
@@ -74,6 +75,7 @@ function submitCoverImage() {
 }
 function submitThurmbnailImage() {
     imagesForm.post(route('group.updateImages', props.group.slug), {
+        preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
             resetThurmbnailImage()
@@ -86,7 +88,9 @@ function submitThurmbnailImage() {
 
 function joinToGroup() {
     const form = useForm({})
-    form.post(route('group.join', props.group.slug))
+    form.post(route('group.join', props.group.slug), {
+        preserveScroll: true
+    })
 }
 
 function approveUser(user) {
@@ -94,14 +98,28 @@ function approveUser(user) {
         user_id: user.id,
         action: 'approve'
     })
-    form.post(route('group.approveRequest', props.group.slug))
+    form.post(route('group.approveRequest', props.group.slug), {
+        preserveScroll: true
+    })
 }
 function rejectUser(user) {
     const form = useForm({
         user_id: user.id,
         action: 'reject'
     })
-    form.post(route('group.approveRequest', props.group.slug))
+    form.post(route('group.approveRequest', props.group.slug), {
+        preserveScroll: true
+    })
+}
+function onRoleChange(user, role) {
+    console.log(user, role)
+    const form = useForm({
+        user_id: user.id,
+        role
+    })
+    form.post(route('group.changeRole', props.group.slug), {
+        preserveScroll: true
+    })
 }
 
 </script>
@@ -117,7 +135,7 @@ function rejectUser(user) {
                     {{ errors.cover }}
                 </div>
                 <div class="group relative bg-white">
-                    <img :src="coverImageSrc || group.cover_url || '/img/default_cover.jpg'"
+                    <img :src="coverImageSrc || group.cover_url || '/imgs/default_cover.jpg'"
                         class="w-full h-[200px] object-cover">
                     <div v-if="isCurrentUserAdmin" class="absolute top-2 right-2 ">
                         <button v-if="!coverImageSrc"
@@ -150,7 +168,7 @@ function rejectUser(user) {
                     <div class="flex">
                         <div
                             class="flex items-center justify-center relative group/thumbnail -mt-[64px] ml-[48px] w-[128px] h-[128px] rounded-full">
-                            <img :src="thumbnailImageSrc || group.thumbnail_url || '/img/default_avatar.webp'"
+                            <img :src="thumbnailImageSrc || group.thumbnail_url || '/imgs/default_avatar.jpg'"
                                 class="w-full h-full object-cover rounded-full">
                             <button v-if="isCurrentUserAdmin && !thumbnailImageSrc"
                                 class="absolute left-0 top-0 right-0 bottom-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/thumbnail:opacity-100">
@@ -213,7 +231,9 @@ function rejectUser(user) {
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <UserListItem v-for="user of users" :user="user" :key="user.id"
-                                    class="shadow rounded-lg" />
+                                    :show-role-dropdown="isCurrentUserAdmin"
+                                    :disable-role-dropdown="group.user_id === user.id" class="shadow rounded-lg"
+                                    @role-change="onRoleChange" />
                             </div>
                         </TabPanel>
                         <TabPanel v-if="isCurrentUserAdmin" class="">
