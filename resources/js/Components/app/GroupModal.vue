@@ -13,6 +13,7 @@ import TextInput from "@/Components/TextInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputTextarea from "@/Components/InputTextarea.vue";
 import axiosClient from "@/axiosClient.js";
+import GroupForm from './GroupForm.vue';
 const props = defineProps({
     modelValue: Boolean
 })
@@ -68,22 +69,7 @@ function submit() {
                                     </button>
                                 </DialogTitle>
                                 <div class="p-4">
-                                    <div class="mb-3">
-                                        <label>Group Name</label>
-                                        <TextInput type="text" class="mt-1 block w-full" v-model="form.name" required
-                                            autofocus placeholder="Enter Group Name" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>
-                                            <Checkbox name="remember" v-model:checked="form.auto_approval" />
-                                            Enable Auto Approval
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>About Group</label>
-                                        <InputTextarea v-model="form.about" class="w-full"
-                                            placeholder="Enter description about group" />
-                                    </div>
+                                    <GroupForm :form="form" />
                                 </div>
                                 <div class="flex justify-end gap-2 py-3 px-4">
                                     <button
