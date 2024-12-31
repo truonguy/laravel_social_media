@@ -32,7 +32,8 @@ class HomeController extends Controller
             return $posts;
         }
         $groups = Group::query()
-            ->select(['groups.*', 'gu.status', 'gu.role'])
+            ->with('currentUserGroup')
+            ->select(['groups.*'])
             ->join('group_users AS gu', 'gu.group_id', 'groups.id')
             ->where('gu.user_id', Auth::id())
             ->orderBy('gu.role')
@@ -40,7 +41,7 @@ class HomeController extends Controller
             ->get();
         return Inertia::render('Home', [
             'posts' => $posts,
-            'groups'=> GroupResource::collection($groups)
+            'groups' => GroupResource::collection($groups)
         ]);
     }
 }
