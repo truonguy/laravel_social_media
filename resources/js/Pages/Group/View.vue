@@ -10,9 +10,9 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InviteUserModal from './InviteUserModal.vue';
 import UserListItem from '@/Components/app/UserListItem.vue';
 import TextInput from '@/Components/TextInput.vue';
-import GroupForm from '@/Components/app/GroupForm.vue';
+import GroupForm from '@/Components/app/Group/GroupForm.vue';
 import PostList from "@/Components/app/PostList.vue";
-import CreatePost from "@/Components/app/CreatePost.vue";
+import CreatePost from "@/Components/app/Home/CreatePost.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -123,6 +123,7 @@ function rejectUser(user) {
         preserveScroll: true
     })
 }
+
 function onRoleChange(user, role) {
     console.log(user, role)
     const form = useForm({
@@ -260,7 +261,7 @@ function updateGroup() {
                                 <UserListItem v-for="user of users" :user="user" :key="user.id"
                                     :show-role-dropdown="isCurrentUserAdmin"
                                     :disable-role-dropdown="group.user_id === user.id" class="shadow rounded-lg"
-                                    @role-change="onRoleChange" />
+                                    @role-change="onRoleChange" @delete="deleteUser" />
                             </div>
                         </TabPanel>
                         <TabPanel v-if="isCurrentUserAdmin" class="">

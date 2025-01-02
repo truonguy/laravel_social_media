@@ -1,6 +1,6 @@
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import GroupListItems from "@/Components/app/GroupListItems.vue";
+import GroupListItems from "@/Components/app/Home/GroupListItems.vue";
 
 defineProps({
     groups: Array

@@ -1,5 +1,5 @@
 <script setup>
-import FollowingListItems from "@/Components/app/FollowingListItem.vue";
+import FollowingListItems from "@/Components/app/Home/FollowingListItem.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 </script>
 <template>

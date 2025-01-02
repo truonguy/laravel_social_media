@@ -1,7 +1,7 @@
 <script setup>
 import TextInput from "@/Components/TextInput.vue";
-import GroupItem from "@/Components/app/Groupitem.vue";
-import GroupModal from "@/Components/app/GroupModal.vue";
+import GroupItem from "@/Components/app/Group/Groupitem.vue";
+import GroupModal from "@/Components/app/Group/Modal/GroupModal.vue";
 import { ref } from "vue";
 const searchKeyword = ref('')
 const showNewGroupModal = ref(false)

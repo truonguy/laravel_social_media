@@ -1,5 +1,7 @@
 <script setup>
-import { Link } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
+import DeleteUserGroupModal from './Group/Modal/DeleteUserGroupModal.vue';
+import { ref } from 'vue';
 defineProps({
     user: Object,
     forApprove: {
@@ -15,7 +17,24 @@ defineProps({
         default: false
     }
 })
-defineEmits(['approve', 'reject', 'roleChange'])
+defineEmits(['approve', 'reject', 'roleChange', 'delete'])
+const showDeleteModal = ref(false);
+const userToDelete = ref(null);
+
+function confirmDelete(user) {
+    userToDelete.value = user;
+    showDeleteModal.value = true;
+}
+
+function deleteUser() {
+    const form = useForm({
+        user_id: userToDelete.value.id,
+    });
+    form.delete(route('group.removeUser', props.group.slug), {
+        preserveScroll: true,
+    });
+    showDeleteModal.value = false;
+}
 </script>
 <template>
     <div class="bg-white transition-all border-2 border-transparent hover:border-indigo-500">
@@ -44,9 +63,23 @@ defineEmits(['approve', 'reject', 'roleChange'])
                         <option :selected="user.role === 'admin'">admin</option>
                         <option :selected="user.role === 'user'">user</option>
                     </select>
+                    <button @click="confirmDelete(user)"
+                        class="text-xs py-1.5 px-2 rounded bg-gray-700 hover:bg-gray-800 text-white ml-3"
+                        :disabled="disableRoleDropdown">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
+        <DeleteUserGroupModal
+        v-if="showDeleteModal"
+        :show="showDeleteModal"
+        title="Confirm Deletion"
+        :message="`Are you sure you want to remove user '${userToDelete?.name}' from this group?`"
+        @cancel="showDeleteModal = false"
+        @confirm="deleteUser"
+        @close="showDeleteModal = false"
+    />
     </div>
 </template>
 <style scoped></style>

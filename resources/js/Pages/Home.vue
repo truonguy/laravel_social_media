@@ -1,8 +1,8 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import GroupList from "@/Components/app/GroupList.vue";
-import FollowingList from "@/Components/app/FollowingList.vue";
-import CreatePost from "@/Components/app/CreatePost.vue";
+import GroupList from "@/Components/app/Home/GroupList.vue";
+import FollowingList from "@/Components/app/Home/FollowingList.vue";
+import CreatePost from "@/Components/app/Home/CreatePost.vue";
 import PostList from "@/Components/app/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 

@@ -9,11 +9,8 @@ import {
     DialogTitle,
 } from '@headlessui/vue'
 import { useForm } from "@inertiajs/vue3";
-import TextInput from "@/Components/TextInput.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import InputTextarea from "@/Components/InputTextarea.vue";
 import axiosClient from "@/axiosClient.js";
-import GroupForm from './GroupForm.vue';
+import GroupForm from '../GroupForm.vue';
 const props = defineProps({
     modelValue: Boolean
 })
