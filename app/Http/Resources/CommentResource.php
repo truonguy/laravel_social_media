@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Http\Resources;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+
 class CommentResource extends JsonResource
 {
     /**
@@ -25,7 +28,7 @@ class CommentResource extends JsonResource
                 "id" => $this->user->id,
                 "name" => $this->user->name,
                 "username" => $this->user->username,
-                "avatar_url" => Storage::url($this->user->avatar_path),
+                "avatar_url" => $this->user->avatar_path ? Storage::url($this->user->avatar_path) : '/imgs/default_avatar.jpg',
             ]
         ];
     }

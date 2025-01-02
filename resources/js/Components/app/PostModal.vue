@@ -25,6 +25,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    group: {
+        type: Object,
+        default: null
+    },
     modelValue: Boolean,
 });
 
@@ -34,6 +38,7 @@ const formErrors = ref({});
 
 const form = useForm({
     body: '',
+    group_id: null,
     attachments: [],
     deleted_file_ids: [],
     _method: 'POST',
@@ -97,7 +102,9 @@ function submit() {
         alert("The total attachment size exceeds 1GB. Please remove some files.");
         return;
     }
-
+    if (props.group) {
+        form.group_id = props.group.id
+    }
     form.attachments = attachmentFiles.value.map(myFile => myFile.file);
     if (props.post.id) {
         form._method = 'PUT';
@@ -169,13 +176,16 @@ function undoDelete(myFile) {
     <teleport to="body">
         <TransitionRoot appear :show="show" as="template">
             <Dialog as="div" @close="closeModal" class="relative z-50">
-                <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0"
+                    enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
                     <div class="fixed inset-0 bg-black/25" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 overflow-y-auto">
                     <div class="flex min-h-full items-center justify-center p-4 text-center">
-                        <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
+                        <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                            enter-to="opacity-100 scale-100" leave="duration-200 ease-in"
+                            leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
                             <DialogPanel
                                 class="w-full max-w-md transform overflow-hidden rounded bg-white text-left align-middle shadow-xl transition-all">
                                 <DialogTitle as="h3"
@@ -188,6 +198,10 @@ function undoDelete(myFile) {
                                 </DialogTitle>
                                 <div class="p-4">
                                     <PostUserHeader :post="post" :show-time="false" class="mb-4" />
+                                    <div v-if="formErrors.group_id"
+                                        class="bg-red-400 py-2 px-3 rounded text-white mb-3">
+                                        {{ formErrors.group_id }}
+                                    </div>
                                     <ckeditor :editor="editor" v-model="form.body" :config="editorConfig"></ckeditor>
 
                                     <div v-if="showExtensionsText"
@@ -196,11 +210,13 @@ function undoDelete(myFile) {
                                         <small>{{ attachmentExtensions.join(', ') }}</small>
                                     </div>
 
-                                    <div v-if="formErrors.attachments" class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
-                                        {{formErrors.attachments}}
+                                    <div v-if="formErrors.attachments"
+                                        class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+                                        {{ formErrors.attachments }}
                                     </div>
 
-                                    <div v-if="isAttachmentSizeExceeded" class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+                                    <div v-if="isAttachmentSizeExceeded"
+                                        class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
                                         The total size of attachments exceeds 1GB. Please remove some files.
                                     </div>
 

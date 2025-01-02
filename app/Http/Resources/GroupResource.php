@@ -19,7 +19,7 @@ class GroupResource extends JsonResource
             'slug' => $this->slug,
             'status' => $this->currentUserGroup?->status,
             'role' => $this->currentUserGroup?->role,
-            'thumbnail_url' => $this->thumbnail_path ? Storage::url($this->thumbnail_path) : '/img/no_image.png',
+            'thumbnail_url' => $this->thumbnail_path ? Storage::url($this->thumbnail_path) : '/imgs/no_image.png',
             'cover_url' => $this->cover_path ? Storage::url($this->cover_path) : null,
             'about' => $this->about,
             'description' => Str::words($this->about, 10),
