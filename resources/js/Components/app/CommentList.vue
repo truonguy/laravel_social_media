@@ -98,8 +98,7 @@ function onCommentDelete(comment) {
 <template>
     <div class="flex gap-2 mb-3">
         <Link :href="route('profile', authUser.username)">
-        <img :src="authUser.avatar_url"
-            class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500" />
+        <img :src="authUser.avatar_url" class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500" />
         </Link>
         <div class="flex flex-1">
             <InputTextarea v-model="newCommentText" placeholder="Enter your comment here" rows="1"
@@ -124,8 +123,8 @@ function onCommentDelete(comment) {
                         <small class="text-xs text-gray-400">{{ comment.updated_at }}</small>
                     </div>
                 </div>
-                <EditDeleteDropdown :user="comment.user" @edit="startCommentEdit(comment)"
-                    @delete="deleteComment(comment)" />
+                <EditDeleteDropdown :user="comment.user" :post="post" :comment="comment"
+                    @edit="startCommentEdit(comment)" @delete="deleteComment(comment)" />
             </div>
             <div class="pl-12">
                 <div v-if="editingComment && editingComment.id === comment.id">

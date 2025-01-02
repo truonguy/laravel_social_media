@@ -13,8 +13,12 @@ import PostAttachments from './PostAttachments.vue';
 import CommentList from "@/Components/app/CommentList.vue"
 
 const props = defineProps({
-    post: Object
+    post: Object,
+    currentUser: Object
 })
+
+console.log('post', props.post)
+console.log('currentUser', props.currentUser)
 
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
@@ -71,7 +75,7 @@ function sendReaction() {
                                 Edit
                             </button>
                             </MenuItem>
-                            <MenuItem v-slot="{ active }">
+                            <MenuItem v-if="post.user.id === currentUser.id" v-slot="{ active }">
                             <button @click="openDeletePostModal" :class="[
                                 active ? 'bg-indigo-500 text-white' : 'text-gray-900',
                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -80,6 +84,7 @@ function sendReaction() {
                                 Delete
                             </button>
                             </MenuItem>
+
                         </div>
                     </MenuItems>
                 </transition>

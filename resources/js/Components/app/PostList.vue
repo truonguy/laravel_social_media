@@ -25,7 +25,7 @@ const allPosts = ref({
 })
 
 const props = defineProps({
-    posts: Array
+    posts: Array,
 })
 
 watch(() => page.props.posts, () => {
@@ -84,7 +84,7 @@ onMounted(() => {
 </script>
 <template>
     <div class="overflow-auto h-full">
-        <PostItem v-for="post of posts" :key="post.id" :post="post" @editClick="openEditModal"
+        <PostItem v-for="post of posts" :key="post.id" :post="post" :currentUser="authUser" @editClick="openEditModal"
             @deletePostClick="openDeletePostModal" @attachmentClick="openAttachmentPreviewModal" />
         <div ref="loadMoreIntersect"></div>
         <PostModal :post="editPost" v-model="showEditModal" @hide="onModalHide" />
