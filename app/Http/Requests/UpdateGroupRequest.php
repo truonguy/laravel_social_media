@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Requests;
+
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,5 +28,12 @@ class UpdateGroupRequest extends FormRequest
             'auto_approval' => ['required', 'boolean'],
             'about' => ['nullable']
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'about' => nl2br($this->about),
+        ]);
     }
 }

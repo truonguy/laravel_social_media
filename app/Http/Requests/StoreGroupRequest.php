@@ -23,4 +23,14 @@ class StoreGroupRequest extends FormRequest
             'about' => ['nullable']
         ];
     }
+
+    protected function passedValidation(): void
+    {
+        // Access the validated data using the validated() method
+        $data = $this->validated();
+        // Modify the 'about' field, for example, convert it to uppercase
+        $data['about'] = nl2br($data['about']);
+        // Update the request data with the modified value
+        $this->replace($data);
+    }
 }
