@@ -54,7 +54,7 @@ class GroupController extends Controller
             ]);
         }
         if ($request->wantsJson()) {
-            return PostResource::collection($posts);
+            return $posts;
         }
         $users = User::query()
             ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
