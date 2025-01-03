@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Posts
+    Route::get('/post/{post}', [PostController::class, 'view'])
+        ->name('post.view');
+
     Route::post('/post', [PostController::class, 'store'])
         ->name('post.create');
 

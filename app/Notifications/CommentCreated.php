@@ -1,18 +1,22 @@
 <?php
+
 namespace App\Notifications;
+
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
+
 class CommentCreated extends Notification
 {
     use Queueable;
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Comment $comment)
+    public function __construct(public Comment $comment, public Post $post)
     {
         //
     }
@@ -30,14 +34,14 @@ class CommentCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return ( new MailMessage )
-//            ->greeting('Hello My Friend')
-            ->line('New comment was added on your post. Please see comment bellow.')
+        return (new MailMessage)
+            //            ->greeting('Hello My Friend')
+            ->line('User "' . $this->comment->user->username . '" has made a comment on your post. Please see comment bellow.')
             ->line('"' . $this->comment->comment . '"')
-            ->action('View Post', url('/'))
+            ->action('View Post', url(route('post.view', $this->post->id)))
             ->line('Thank you for using our application!')
-//            ->salutation("My salutation")
-            ;
+            //            ->salutation("My salutation")
+        ;
     }
     /**
      * Get the array representation of the notification.
