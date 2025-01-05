@@ -21,15 +21,18 @@
 .ck-content > pre {
     margin: revert;
 }
+
 .ck-content > ol,
 .ck-content > ul {
     list-style: revert;
     margin: revert;
     padding: revert;
 }
+
 .ck-content > table {
     border-collapse: revert;
 }
+
 .ck-content > h1,
 .ck-content > h2,
 .ck-content > h3,
@@ -39,10 +42,12 @@
     font-size: revert;
     font-weight: revert;
 }
+
 .ck-content a {
     text-decoration: underline;
     color: #4b9afa;
 }
+
 .ck-content-output > blockquote,
 .ck-content-output > dl,
 .ck-content-output > dd,
@@ -58,18 +63,22 @@
 .ck-content-output > pre {
     margin: revert;
 }
+
 .ck-content-output > *:last-child {
     margin-bottom: 0;
 }
+
 .ck-content-output > ol,
 .ck-content-output > ul {
     list-style: revert;
     margin: revert;
     padding: revert;
 }
+
 .ck-content-output > table {
     border-collapse: revert;
 }
+
 .ck-content-output > h1,
 .ck-content-output > h2,
 .ck-content-output > h3,
@@ -79,6 +88,7 @@
     font-size: revert;
     font-weight: revert;
 }
+
 .ck-content-output blockquote {
     border-left: 5px solid #ccc;
     font-style: italic;
@@ -88,7 +98,28 @@
     padding-left: 1.5em;
     padding-right: 1.5em;
 }
+
 .ck-content-output a {
     text-decoration: #4b9afa;
     color: blue;
+}
+
+.ck-content-output a.hashtag {
+    background-color: #eaf4ff;
+    color: #4156e2;
+}
+
+/* WebKit browsers (Chrome, Safari) */
+.comment-list::-webkit-scrollbar {
+    width: 8px;
+    background-color: transparent;
+}
+
+.comment-list::-webkit-scrollbar-thumb {
+    background-color: #a2c3de; /* Thumb color */
+    border-radius: 6px;
+}
+
+.comment-list::-webkit-scrollbar-track {
+    background-color: #f1f1f3; /* Track color */
 }

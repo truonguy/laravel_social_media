@@ -13,6 +13,7 @@ import PostAttachments from './PostAttachments.vue';
 import CommentList from "@/Components/app/CommentList.vue"
 import { ClipboardIcon, EyeIcon } from '@heroicons/vue/24/solid';
 import { Link } from "@inertiajs/vue3";
+import { computed } from 'vue';
 
 const props = defineProps({
     post: Object,
@@ -20,6 +21,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['editClick', 'attachmentClick'])
+
+const postBody = computed(() => props.post.body.replace(
+    /(#\w+)(?![^<]*<\/a>)/g,
+    (match, group) => {
+        const encodedGroup = encodeURIComponent(group);
+        return `<a href="/search/${encodedGroup}" class="hashtag">${group}</a>`;
+    })
+)
 
 function openEditModal() {
     emit('editClick', props.post)
@@ -121,7 +130,7 @@ function copyToClipboard() {
             </Menu>
         </div>
         <div class="mb-3">
-            <ReadMoreReadLess :content="post.body" />
+            <ReadMoreReadLess :content="postBody"/>
         </div>
         <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
