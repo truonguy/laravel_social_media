@@ -105,6 +105,9 @@ function submit() {
     if (props.post.group) {
         form.group_id = props.post.group.id
     }
+    if (props.group) {
+        form.group_id = props.group.id;
+    }
     form.attachments = attachmentFiles.value.map(myFile => myFile.file);
     if (props.post.id) {
         form._method = 'PUT';
