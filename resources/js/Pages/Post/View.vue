@@ -5,18 +5,23 @@ import { ref } from "vue";
 import PostModal from "@/Components/app/PostModal.vue";
 import AttachmentPreviewModal from "@/Components/app/AttachmentPreviewModal.vue";
 import { usePage } from "@inertiajs/vue3";
+
 defineProps({
     post: Object
 })
+
 const authUser = usePage().props.auth.user;
+
 const showEditModal = ref(false)
 const showAttachmentsModal = ref(false)
 const editPost = ref({})
 const previewAttachmentsPost = ref({})
+
 function openEditModal(post) {
     editPost.value = post;
     showEditModal.value = true;
 }
+
 function openAttachmentPreviewModal(post, index) {
     previewAttachmentsPost.value = {
         post,
@@ -24,6 +29,7 @@ function openAttachmentPreviewModal(post, index) {
     }
     showAttachmentsModal.value = true;
 }
+
 function onModalHide() {
     editPost.value = {
         id: null,
@@ -32,6 +38,7 @@ function onModalHide() {
     }
 }
 </script>
+
 <template>
     <AuthenticatedLayout>
         <div class="p-8 w-[600px] mx-auto h-full overflow-auto">
@@ -42,4 +49,5 @@ function onModalHide() {
             v-model:index="previewAttachmentsPost.index" v-model="showAttachmentsModal" />
     </AuthenticatedLayout>
 </template>
+
 <style scoped></style>

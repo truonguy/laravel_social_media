@@ -102,8 +102,8 @@ function submit() {
         alert("The total attachment size exceeds 1GB. Please remove some files.");
         return;
     }
-    if (props.group) {
-        form.group_id = props.group.id
+    if (props.post.group) {
+        form.group_id = props.post.group.id
     }
     form.attachments = attachmentFiles.value.map(myFile => myFile.file);
     if (props.post.id) {

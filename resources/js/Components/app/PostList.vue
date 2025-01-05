@@ -26,6 +26,7 @@ const allPosts = ref({
 
 const props = defineProps({
     posts: Array,
+    groups: Array,
 })
 
 watch(() => page.props.posts, () => {
@@ -87,7 +88,7 @@ onMounted(() => {
         <PostItem v-for="post of posts" :key="post.id" :post="post" :currentUser="authUser" @editClick="openEditModal"
             @deletePostClick="openDeletePostModal" @attachmentClick="openAttachmentPreviewModal" />
         <div ref="loadMoreIntersect"></div>
-        <PostModal :post="editPost" v-model="showEditModal" @hide="onModalHide" />
+        <PostModal :post="editPost" v-model="showEditModal" @hide="onModalHide" :group="props.groups"/>
         <AttachmentPreviewModal :attachments="previewAttachmentsPost.post?.attachments || []"
             v-model:index="previewAttachmentsPost.index" v-model="showAttachmentsModal" />
         <DeletePostModal :post="deletePost" v-model="showDeletePostModal" />

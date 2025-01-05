@@ -247,7 +247,7 @@ function updateGroup() {
                         <TabPanel>
                             <template v-if="posts">
                                 <CreatePost :group="group" />
-                                <PostList v-if="posts.data.length" :posts="posts.data" class="flex-1" />
+                                <PostList v-if="posts.data.length" :posts="posts.data" :groups="group" class="flex-1" />
                                 <div v-else class="py-8 text-center">
                                     There are no posts in this group. Be the first and create it.
                                 </div>

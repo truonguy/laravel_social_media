@@ -19,9 +19,6 @@ const props = defineProps({
     currentUser: Object
 })
 
-console.log('post', props.post)
-console.log('currentUser', props.currentUser)
-
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
 function openEditModal() {
