@@ -2,6 +2,10 @@
 import TextInput from "@/Components/TextInput.vue";
 import { ref } from "vue";
 const searchKeyword = ref('')
+
+defineProps({
+    users: Array
+})
 </script>
 <template>
     <TextInput :model-value="searchKeyword" placeholder="Type to search" class="w-full mt-3" />
@@ -10,6 +14,7 @@ const searchKeyword = ref('')
             You don't have friends yet.
         </div>
         <div v-else>
+            <UserListItem v-for="user of users" :user="user" :key="user.id" class="rounded-lg" />
         </div>
     </div>
 </template>
