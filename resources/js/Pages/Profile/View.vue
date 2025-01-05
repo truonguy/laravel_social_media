@@ -13,6 +13,7 @@ import PostList from '@/Components/app/PostList.vue';
 import UserListItem from '@/Components/app/UserListItem.vue';
 import TextInput from '@/Components/TextInput.vue';
 import TabPhotos from './TabPhotos.vue';
+import CreatePost from '@/Components/app/Home/CreatePost.vue';
 
 const imagesForm = useForm({
     avatar: null,
