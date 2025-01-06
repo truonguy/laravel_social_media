@@ -1,12 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
-import { MoonIcon } from '@heroicons/vue/24/solid'
+import DarkModeDropDown from '@/Components/app/DarkModeDropDown.vue';
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || '');
@@ -17,16 +17,6 @@ function search() {
     router.get(route('search', encodeURIComponent(keywords.value)))
 }
 
-function toggleDarkMode() {
-    const html = window.document.documentElement
-    if (html.classList.contains('dark')) {
-        html.classList.remove('dark')
-        localStorage.setItem('darkMode', '0')
-    } else {
-        html.classList.add('dark')
-        localStorage.setItem('darkMode', '1')
-    }
-}
 </script>
 
 <template>
@@ -48,9 +38,7 @@ function toggleDarkMode() {
                     <div class="flex items-center gap-3 flex-1">
                         <TextInput v-model="keywords" placeholder="Search on the website" class="w-full"
                             @keyup.enter="search" />
-                        <button @click="toggleDarkMode" class="dark:text-white">
-                            <MoonIcon class="w-5 h-5" />
-                        </button>
+                        <DarkModeDropDown />
                     </div>
                     <div class="hidden sm:flex sm:items-center">
                         <!-- Settings Dropdown -->
