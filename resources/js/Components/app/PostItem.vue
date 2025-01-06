@@ -11,16 +11,21 @@ import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import PostAttachments from './PostAttachments.vue';
 import CommentList from "@/Components/app/CommentList.vue"
-import { ClipboardIcon, EyeIcon } from '@heroicons/vue/24/solid';
-import { Link } from "@inertiajs/vue3";
+import { ClipboardIcon, EyeIcon, MapPinIcon } from '@heroicons/vue/24/solid';
+import { Link, usePage, useForm } from "@inertiajs/vue3";
 import { computed } from 'vue';
 import UrlPreview from "@/Components/app/UrlPreview.vue";
+import EditDeleteDropdown from './EditDeleteDropdown.vue';
 
 const props = defineProps({
     post: Object,
     currentUser: Object
 })
 
+const authUser = usePage().props.auth.user;
+const group = usePage().props.group
+
+const user = computed(() => props.comment?.user || props.post?.user)
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
 const postBody = computed(() => {
@@ -67,7 +72,40 @@ function copyToClipboard() {
     tempInput.select();
     document.execCommand('copy');
     // Remove the temporary input from the DOM
-    document.body.removeChild(tempInput);
+    documen
+
+    t.body.removeChild(tempInput);
+}
+const pinAllowed = computed(() => {
+    return user.value.id === authUser.id || props.post.group && props.post.group.role === 'admin'
+})
+const isPinned = computed(() => {
+    if (group?.id) {
+        return group?.pinned_post_id === props.post.id
+    }
+    return authUser?.pinned_post_id === props.post.id
+})
+
+function pinUnpinPost() {
+    const form = useForm({
+        forGroup: group?.id
+    })
+    let isPinned = false;
+    if (group?.id) {
+        isPinned = group?.pinned_post_id === props.post.id;
+    } else {
+        isPinned = authUser?.pinned_post_id === props.post.id;
+    }
+    form.post(route('post.pinUnpin', props.post.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            if (group?.id) {
+                group.pinned_post_id = isPinned ? null : props.post.id
+            } else {
+                authUser.pinned_post_id = isPinned ? null : props.post.id
+            }
+        }
+    })
 }
 
 </script>
@@ -76,7 +114,7 @@ function copyToClipboard() {
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex items-center justify-between mb-3">
             <PostUserHeader :post="post" />
-            <Menu as="div" class="relative z-10 inline-block text-left">
+            <!-- <Menu as="div" class="relative z-10 inline-block text-left">
                 <div>
                     <MenuButton
                         class="w-8 h-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
@@ -92,6 +130,15 @@ function copyToClipboard() {
                     <MenuItems
                         class="absolute right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                         <div class="px-1 py-1">
+                            <MenuItem v-if="pinAllowed" v-slot="{ active }">
+                            <button @click="$emit('pin')" :class="[
+                                active ? 'bg-indigo-500 text-white' : 'text-gray-900',
+                                'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                            ]">
+                                <MapPinIcon class="mr-2 h-5 w-5" aria-hidden="true" />
+                                {{ isPinned ? 'Unpin' : 'Pin' }}
+                            </button>
+                            </MenuItem>
                             <MenuItem v-slot="{ active }">
                             <button @click="openEditModal" :class="[
                                 active ? 'bg-indigo-500 text-white' : 'text-gray-900',
@@ -131,11 +178,19 @@ function copyToClipboard() {
                         </div>
                     </MenuItems>
                 </transition>
-            </Menu>
+            </Menu> -->
+            <div class="flex items-center gap-2">
+                <div v-if="isPinned" class="flex items-center text-xs">
+                    <MapPinIcon class="h-3 w-3" aria-hidden="true" />
+                    pinned
+                </div>
+                <EditDeleteDropdown :user="post.user" :post="post" @edit="openEditModal" @delete="openDeletePostModal"
+                    @pin="pinUnpinPost" />
+            </div>
         </div>
         <div class="mb-3">
-            <ReadMoreReadLess :content="postBody"/>
-            <UrlPreview :preview="post.preview" :url="post.preview_url"/>
+            <ReadMoreReadLess :content="postBody" />
+            <UrlPreview :preview="post.preview" :url="post.preview_url" />
         </div>
         <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
