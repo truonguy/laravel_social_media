@@ -6,9 +6,9 @@ defineProps({
 </script>
 <template>
     <a :href="url" target="_blank" v-if="preview && preview.title"
-        class="block mt-4 border border-indigo-200 bg-indigo-50">
+        class="block mt-4 border border-indigo-200 dark:border-slate-600 bg-indigo-50">
         <img :src="preview.image" class="max-w-full" :alt="preview.title" />
-        <div class="p-2">
+        <div class="p-2 dark:bg-slate-800">
             <h3 class="font-semibold">{{ preview.title }}</h3>
             <p class="text-sm m-none">{{ preview.description }}</p>
         </div>
