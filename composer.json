@@ -9,6 +9,7 @@
     ],
     "license": "MIT",
     "require": {
+        "ext-dom": "*",
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.31",

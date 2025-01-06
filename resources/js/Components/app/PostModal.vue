@@ -13,9 +13,13 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { isImage } from "@/helpers.js";
 import axiosClient from "@/axiosClient.js";
+import UrlPreview from "@/Components/app/UrlPreview.vue";
 
 const editor = ClassicEditor;
 const editorConfig = {
+    mediaEmbed: {
+        removeProviders: ['dailymotion', 'spotify', 'youtube', 'vimeo', 'instagram', 'twitter', 'googleMaps', 'flickr', 'facebook']
+    },
     toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'outdent', 'indent', '|', 'link', '|', 'blockQuote'],
 };
 
@@ -43,6 +47,8 @@ const form = useForm({
     group_id: null,
     attachments: [],
     deleted_file_ids: [],
+    preview: {},
+    preview_url: null,
     _method: 'POST',
 });
 
@@ -81,6 +87,7 @@ const emit = defineEmits(['update:modelValue', 'hide']);
 
 watch(() => props.post, () => {
     form.body = props.post.body || '';
+    onInputChange();
 });
 
 function closeModal() {
@@ -192,6 +199,56 @@ function getAIContent() {
             aiButtonLoading.value = false;
         })
 }
+function fetchPreview(url) {
+    if (url === form.preview_url) {
+        return;
+    }
+    form.preview_url = url
+    form.preview = {}
+    if (url) {
+        axiosClient.post(route('post.fetchUrlPreview'), { url })
+            .then(({ data }) => {
+                form.preview = {
+                    title: data['og:title'],
+                    description: data['og:description'],
+                    image: data['og:image']
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+}
+function onInputChange() {
+    console.log("222222222")
+    let url = matchHref()
+    if (!url) {
+        url = matchLink()
+    }
+    fetchPreview(url)
+}
+function matchHref() {
+    // Regular expression to match URLs
+    const urlRegex = /<a.+href="((https?):\/\/[^"]+)"/;
+    // Match the first URL in the HTML content
+    const match = form.body.match(urlRegex);
+    // Check if a match is found
+    if (match && match.length > 0) {
+        return match[1];
+    }
+    return null;
+}
+function matchLink() {
+    // Regular expression to match URLs
+    const urlRegex = /(?:https?):\/\/[^\s<]+/;
+    // Match the first URL in the HTML content
+    const match = form.body.match(urlRegex);
+    // Check if a match is found
+    if (match && match.length > 0) {
+        return match[0];
+    }
+    return null
+}
 
 </script>
 
@@ -226,8 +283,8 @@ function getAIContent() {
                                         {{ formErrors.group_id }}
                                     </div>
                                     <div class="relative group">
-                                        <ckeditor :editor="editor" v-model="form.body" :config="editorConfig">
-                                        </ckeditor>
+                                        <ckeditor :editor="editor" v-model="form.body" @input="onInputChange"></ckeditor>
+                                        <!-- <UrlPreview :preview="form.preview" :url="form.preview_url" /> -->
                                         <button @click="getAIContent" :disabled="aiButtonLoading"
                                             class="absolute right-1 top-12 w-8 h-8 p-1 rounded bg-indigo-500 hover:bg-indigo-600 text-white flex justify-center items-center transition-all opacity-0  group-hover:opacity-100 disabled:cursor-not-allowed disabled:bg-indigo-400 disabled:hover:bg-indigo-400">
                                             <svg v-if="aiButtonLoading" class="animate-spin h-4 w-4 text-white"

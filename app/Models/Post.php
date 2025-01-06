@@ -15,7 +15,11 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'body', 'group_id'];
+    protected $fillable = ['user_id', 'body', 'group_id', 'preview', 'preview_url'];
+    // With casting
+    protected $casts = [
+        'preview' => 'json',
+    ];
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -26,7 +30,8 @@ class Post extends Model
     }
     public function attachments(): HasMany
     {
-        return $this->hasMany(PostAttachment::class)->latest();;
+        return $this->hasMany(PostAttachment::class)->latest();
+        ;
     }
     public function reactions(): MorphMany
     {
@@ -43,15 +48,16 @@ class Post extends Model
     public static function postsForTimeline($userId): Builder
     {
         return Post::query() // SELECT * FROM posts
-        ->withCount('reactions') // SELECT COUNT(*) from reactions
-        ->with([
-            'comments' => function ($query) {
-                $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
-                // SELECT COUNT(*) from reactions
-            },
-            'reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
-            }])
+            ->withCount('reactions') // SELECT COUNT(*) from reactions
+            ->with([
+                'comments' => function ($query) {
+                    $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
+                    // SELECT COUNT(*) from reactions
+                },
+                'reactions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+                }
+            ])
             ->latest();
     }
     public function isOwner($userId)

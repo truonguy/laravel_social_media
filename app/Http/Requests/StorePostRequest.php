@@ -45,6 +45,8 @@ class StorePostRequest extends FormRequest
     {
         return [
             'body' => ['nullable', 'string'],
+            'preview' => ['nullable', 'array'],
+            'preview_url' => ['nullable', 'string'],
             'attachments' => [
                 'array',
                 'max:50',
@@ -61,23 +63,33 @@ class StorePostRequest extends FormRequest
                 File::types(self::$extensions),
             ],
             'user_id' => ['numeric'],
-            'group_id' => ['nullable', 'exists:groups,id', function($attribute, $value, \Closure $fail) {
-                $groupUser = GroupUser::where('user_id', Auth::id())
-                    ->where('group_id', $value)
-                    ->where('status', GroupUserStatus::APPROVED->value)
-                    ->exists();
-                if (!$groupUser) {
-                    $fail('You don\'t have permission to create post in this group');
+            'group_id' => [
+                'nullable',
+                'exists:groups,id',
+                function ($attribute, $value, \Closure $fail) {
+                    $groupUser = GroupUser::where('user_id', Auth::id())
+                        ->where('group_id', $value)
+                        ->where('status', GroupUserStatus::APPROVED->value)
+                        ->exists();
+                    if (!$groupUser) {
+                        $fail('You don\'t have permission to create post in this group');
+                    }
                 }
-            }]
+            ]
         ];
     }
 
     protected function prepareForValidation()
     {
+        $body = $this->input('body') ?: '';
+        $previewUrl = $this->input('preview_url') ?: '';
+        $trimmedBody = trim(strip_tags($body));
+        if ($trimmedBody === $previewUrl) {
+            $body = '';
+        }
         $this->merge([
             'user_id' => Auth::user()->id,
-            'body' => $this->input('body') ?: ''
+            'body' => $body
         ]);
     }
 
