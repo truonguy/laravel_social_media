@@ -1,8 +1,8 @@
 <script setup>
-import UserListItem from "@/Components/app/UserListItem.vue";
 import PostList from "@/Components/app/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Groupitem from "@/Components/app/Group/Groupitem.vue";
+import UserListItem from "@/Components/app/UserListItem.vue";
 const props = defineProps({
     search: String,
     users: Array,

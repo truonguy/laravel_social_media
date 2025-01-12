@@ -226,7 +226,7 @@ function followUser() {
                         </Tab>
                     </TabList>
 
-                    <TabPanels class="mt-2">
+                    <TabPanels class="mt-2 dark:text-slate-300 ">
                         <TabPanel>
                             <template v-if="posts">
                                 <CreatePost />

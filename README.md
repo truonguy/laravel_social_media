@@ -68,3 +68,8 @@ php artisan key:generate --ansi
 
 ```bash
 php artisan migrate
+```
+### 7. Run Project
+```bash
+npm run dev
+```

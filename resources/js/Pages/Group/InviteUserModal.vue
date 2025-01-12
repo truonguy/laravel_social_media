@@ -53,7 +53,7 @@ function submit() {
                 <label>Username or email</label>
                 <TextInput type="text" class="mt-1 block w-full"
                     :class="page.props.errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''"
-                    v-model="form.email" required autofocus />
+                    v-model="form.email" required autofocus placeholder="Username or Email" />
                 <div class="text-red-500">{{ page.props.errors.email }}</div>
             </div>
         </div>

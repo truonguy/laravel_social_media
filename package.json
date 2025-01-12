@@ -19,9 +19,10 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^40.1.0",
+        "@ckeditor/ckeditor5-vue": "^5.1.0",
         "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.2.0",
-        "@ckeditor/ckeditor5-build-classic": "^40.1.0",
-        "@ckeditor/ckeditor5-vue": "^5.1.0"
+        "date-fns": "^4.1.0"
     }
 }

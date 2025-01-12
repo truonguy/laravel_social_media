@@ -155,7 +155,7 @@ function updateGroup() {
                 <div v-if="errors.cover" class="my-2 py-2 px-3 font-medium text-sm bg-red-400 text-white">
                     {{ errors.cover }}
                 </div>
-                <div class="group relative bg-white">
+                <div class="group relative bg-white  dark:bg-slate-950 dark:text-gray-100">
                     <img :src="coverImageSrc || group.cover_url || '/imgs/default_cover.jpg'"
                         class="w-full h-[200px] object-cover">
                     <div v-if="isCurrentUserAdmin" class="absolute top-2 right-2 ">
@@ -228,7 +228,7 @@ function updateGroup() {
             </div>
             <div class="border-t m-4 pt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white">
+                    <TabList class="flex bg-white dark:bg-slate-950 dark:text-white">
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Posts" :selected="selected" />
                         </Tab>
@@ -245,7 +245,7 @@ function updateGroup() {
                             <TabItem text="About" :selected="selected" />
                         </Tab>
                     </TabList>
-                    <TabPanels class="mt-2">
+                    <TabPanels class="mt-2 dark:text-slate-300">
                         <TabPanel>
                             <template v-if="posts">
                                 <CreatePost :group="group" />
